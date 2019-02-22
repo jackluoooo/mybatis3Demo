@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luo.mappper.EmployeeMapperDynamicSql">
+    <!--查询员工-->
+      <select id="getEmpBycConditionIF" resultType="com.luo.entity.EmployeeEntity">
+          select * from tbl_employee <where>
+          <if test="id != null">  id=#{id}</if>
+          <if test="lastname != null and lastname !=''"> and lastname=#{lastname}</if>
+          <if test="gender != null and lastname !=''"> and gender=#{gender}</if>
+          <if test="email != null and lastname !=''"> and email=#{email}</if>
+       </where>
+      </select>
+    <select id="getEmpBycConditionTrim" resultType="com.luo.entity.EmployeeEntity">
+        select * from  tbl_employee
+    <!--     prefix：前缀
+         prefixOverrides 前缀覆盖
+         suffixOverrides="and" 把and后缀去掉-->
+        <trim prefix="where" prefixOverrides="" suffix="" suffixOverrides="and">
+
+        <if test="id != null">  id=#{id} and</if>
+        <if test="lastname != null and lastname !=''">lastname=#{lastname}and</if>
+        <if test="gender != null and lastname !=''">  gender=#{gender} and</if>
+        <if test="email != null and lastname !=''">  email=#{email}</if>
+        </trim>
+
+    </select>
+
+    <select id="getEmpBycConditionChoose" resultType="com.luo.entity.EmployeeEntit">
+         select * from tbl_employee
+        <where>
+            <choose>
+                <when test="id!=null">
+                    id=#{id}
+                </when>
+                <when test="lastname!=null">
+                    lastname=#{lastname}
+                </when>
+                <when test="gender!=null">
+                    gender=#{gender}
+                </when>
+                <when test="email!=null">
+                    email=#{email}
+                </when>
+                <otherwise>
+                    gender=0
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+</mapper>

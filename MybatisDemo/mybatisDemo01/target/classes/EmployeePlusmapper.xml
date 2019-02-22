@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.luo.mappper.EmployeePlusMapper">
+    <resultMap id="BaseResult" type="com.luo.entity.EmployeeEntity">
+        <id column="id" property="id" jdbcType="INTEGER"/> <!--指定主键，起到优化作用-->
+        <result column="lastname" property="lastname" jdbcType="VARCHAR"/>
+        <result column="gender" property="gender" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="DiffBaseResult" type="com.luo.entity.EmployeeEntity">
+        <id column="id" property="id" jdbcType="INTEGER"/> <!--指定主键，起到优化作用-->
+        <result column="lastname" property="lastname" jdbcType="VARCHAR"/>
+        <result column="gender" property="gender" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="dept_id" property="department.id" jdbcType="INTEGER"/>
+        <result column="dep_name" property="department.departmentname" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="DiffBaseResult2" type="com.luo.entity.EmployeeEntity">
+        <id column="id" property="id" jdbcType="INTEGER"/> <!--指定主键，起到优化作用-->
+        <result column="lastname" property="lastname" jdbcType="VARCHAR"/>
+        <result column="gender" property="gender" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+       <!--指定联合的javaBean-->
+        <association property="department" javaType="com.luo.entity.DepartmentEntity">
+            <id column="dept_id" property="id" jdbcType="INTEGER"/>
+            <result column="dep_name" property="departmentname" jdbcType="VARCHAR"/>
+        </association>
+    </resultMap>
+    <select id="getEmpById" resultMap="BaseResult">
+        select * from tbl_employee
+    </select>
+
+    <select id="getEmpByIdDiff" resultMap="DiffBaseResult2">
+       select tbl_employee.id id,lastname,gender,email,tbl_dept.id dept_id ,dep_name
+       from
+       tbl_employee
+       left join
+       tbl_dept
+       on dept_id=tbl_dept.id
+    </select>
+
+    <resultMap id="myempByStep" type="com.luo.entity.EmployeeEntity">
+        <id column="id" property="id" jdbcType="INTEGER"/> <!--指定主键，起到优化作用-->
+        <result column="lastname" property="lastname" jdbcType="VARCHAR"/>
+        <result column="gender" property="gender" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <association property="department" select="com.luo.mappper.DepartmentMapper.getDeptById"
+        column="dept_id" >
+
+        </association>
+    </resultMap>
+
+    <select id="getEmpByIdStep" resultMap="myempByStep">
+        select * from tbl_employee WHERE id=#{id}
+    </select>
+    <!--分布查询可以延迟加载
+    Employee==>Dept:
+    -->
+</mapper>
